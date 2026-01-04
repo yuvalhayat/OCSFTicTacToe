@@ -1,9 +1,8 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 
-public class Warning implements Serializable {
+public class Message implements Serializable {
 
 	/**
 	 * 
@@ -20,7 +19,7 @@ public class Warning implements Serializable {
         return data;
     }
 
-	public Warning(Response response,Object data) {
+	public Message(Response response,Object data) {
 		this.response = response;
 		this.data = data;
 	}

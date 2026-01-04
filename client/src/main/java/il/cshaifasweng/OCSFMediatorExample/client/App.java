@@ -3,7 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.MoveRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.Response;
 import il.cshaifasweng.OCSFMediatorExample.entities.SymbolRequest;
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -113,9 +113,9 @@ public class App extends Application {
     *
     * */
     @Subscribe
-    public void onWarningEvent(WarningEvent event) throws IOException {
-        Warning warning = event.getWarning();
-        Response response = warning.getResponse();
+    public void onMessageEvent(MessageEvent event) throws IOException {
+        Message message = event.getMessage();
+        Response response = message.getResponse();
 
         if(response==showWinningScreen)
         {
@@ -156,21 +156,21 @@ public class App extends Application {
         else if(response==setSymbol){
             Platform.runLater(() -> {
                 gameScreenController controller = fxmlLoader.getController();
-                SymbolRequest symbolRequest = (SymbolRequest) warning.getData();
+                SymbolRequest symbolRequest = (SymbolRequest) message.getData();
                 controller.handleSetSymbol(symbolRequest);
             });
         }
         else if (response==updateGame){
             Platform.runLater(() -> {
                 gameScreenController controller = fxmlLoader.getController();
-                MoveRequest moveRequest = (MoveRequest) warning.getData();
+                MoveRequest moveRequest = (MoveRequest) message.getData();
                 controller.handleMoveRequest(moveRequest);
             });
         }
         else if (response==whoseTurn){
             Platform.runLater(() -> {
                 gameScreenController controller = fxmlLoader.getController();
-                char symbol = (char) warning.getData();
+                char symbol = (char) message.getData();
                 controller.handleWhoseTurn(symbol);
             });
         }

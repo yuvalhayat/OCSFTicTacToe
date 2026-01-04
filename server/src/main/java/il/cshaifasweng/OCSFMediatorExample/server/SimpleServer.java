@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.MoveRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.Response;
 import il.cshaifasweng.OCSFMediatorExample.entities.SymbolRequest;
@@ -9,7 +10,7 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
 
 import static il.cshaifasweng.OCSFMediatorExample.entities.Response.*;
@@ -35,8 +36,8 @@ public class SimpleServer extends AbstractServer {
                 System.out.println("Sub list size: "+SubscribersList.size());
                 try {
                     if(SubscribersList.size()==1){
-                        Warning warning = new Warning(Response.waitInQueue,null);
-                        client.sendToClient(warning);
+                        Message message = new Message(Response.waitInQueue,null);
+                        client.sendToClient(message);
                         System.out.println("Sub list size == 1 ");
 
                     }
@@ -52,8 +53,8 @@ public class SimpleServer extends AbstractServer {
                     for(SubscribedClient subscribedClient: SubscribersList){
                         if(subscribedClient.getClient().equals(client)){
                             SubscribersList.remove(subscribedClient);
-                            Warning warning = new Warning(Response.waitInQueue,null);
-                            sendToAllClients(warning);
+                            Message message = new Message(Response.waitInQueue,null);
+                            sendToAllClients(message);
                             break;
                         }
                     }
@@ -73,8 +74,8 @@ public class SimpleServer extends AbstractServer {
                 return;
             }
             GameStatus status = game.playMove(symbol,row,col);
-            Warning warning = new Warning(Response.updateGame,move);
-            sendToAllClients(warning);
+            Message message = new Message(Response.updateGame,move);
+            sendToAllClients(message);
 
             try {
                 if(status==GameStatus.playerXWon || status==GameStatus.playerOWon){
@@ -91,11 +92,11 @@ public class SimpleServer extends AbstractServer {
                     ConnectionToClient winningPlayer = SubscribersList.get(winningPlayerIndex).getClient();
                     ConnectionToClient losingPlayer = SubscribersList.get(losingPlayerIndex).getClient();
 
-                    Warning winningWarning = new Warning(Response.showWinningScreen,null);
-                    Warning losingWarning = new Warning(Response.showLosingScreen,null);
+                    Message winningMessage = new Message(Response.showWinningScreen,null);
+                    Message losingMessage = new Message(Response.showLosingScreen,null);
 
-                    winningPlayer.sendToClient(winningWarning);
-                    losingPlayer.sendToClient(losingWarning);
+                    winningPlayer.sendToClient(winningMessage);
+                    losingPlayer.sendToClient(losingMessage);
 
                     Thread.sleep(secondsToWaitBetweenGames * 1000);
                     setUpNewGame();
@@ -103,16 +104,16 @@ public class SimpleServer extends AbstractServer {
                 else if(status==GameStatus.draw){
                     System.out.println("draw");
 
-                    warning = new Warning(Response.showDrawingScreen,null);
-                    sendToAllClients(warning);
+                    message = new Message(Response.showDrawingScreen,null);
+                    sendToAllClients(message);
                     Thread.sleep(secondsToWaitBetweenGames * 1000);
                     setUpNewGame();
                 }
                 else if (status==GameStatus.gameContinue){
                     System.out.println("game continue");
 
-                    warning =  new Warning(Response.whoseTurn,game.getWhoseTurn());
-                    sendToAllClients(warning);
+                    message =  new Message(Response.whoseTurn,game.getWhoseTurn());
+                    sendToAllClients(message);
                 }
                 else{
                     System.err.println("invalid move by " + symbol + " " + row + " " + col);
@@ -131,10 +132,10 @@ public class SimpleServer extends AbstractServer {
         }
 	}
     
-	public void sendToAllClients(Warning warning) {
+	public void sendToAllClients(Message message) {
 		try {
 			for (SubscribedClient subscribedClient : SubscribersList) {
-				subscribedClient.getClient().sendToClient(warning);
+				subscribedClient.getClient().sendToClient(message);
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -148,8 +149,8 @@ public class SimpleServer extends AbstractServer {
     private void setUpNewGame() throws IOException{
         System.out.println("Starting game ");
 
-        Warning warning = new Warning(Response.gameScreen,null);
-        this.sendToAllClients(warning);
+        Message message = new Message(Response.gameScreen,null);
+        this.sendToAllClients(message);
         ConnectionToClient client1 = SubscribersList.get(0).getClient();
         ConnectionToClient client2 = SubscribersList.get(1).getClient();
 
@@ -161,14 +162,14 @@ public class SimpleServer extends AbstractServer {
         SymbolRequest symbolRequest1 = new SymbolRequest(symbol1,symbol2);
         SymbolRequest symbolRequest2 = new SymbolRequest(symbol2,symbol1);
 
-        warning = new Warning(Response.setSymbol,symbolRequest1);
-        client1.sendToClient(warning);
+        message = new Message(Response.setSymbol,symbolRequest1);
+        client1.sendToClient(message);
 
-        warning = new Warning(Response.setSymbol,symbolRequest2);
-        client2.sendToClient(warning);
+        message = new Message(Response.setSymbol,symbolRequest2);
+        client2.sendToClient(message);
 
-        warning =  new Warning(Response.whoseTurn,game.getWhoseTurn());
-        sendToAllClients(warning);
+        message =  new Message(Response.whoseTurn,game.getWhoseTurn());
+        sendToAllClients(message);
     }
 
     private int getPlayerIndex(char Symbol){
