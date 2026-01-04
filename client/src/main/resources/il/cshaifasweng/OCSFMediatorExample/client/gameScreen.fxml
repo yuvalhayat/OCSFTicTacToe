@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            minHeight="500" minWidth="500"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.gameScreenController">
+
+    <!-- ===== TOP ===== -->
+    <top>
+        <Label text="Tic Tac Toe"
+               BorderPane.alignment="CENTER">
+            <font>
+                <Font size="28"/>
+            </font>
+            <padding>
+                <Insets top="15" bottom="15"/>
+            </padding>
+        </Label>
+    </top>
+
+    <!-- ===== CENTER ===== -->
+    <center>
+        <GridPane fx:id="board"
+                  alignment="CENTER"
+                  hgap="10"
+                  vgap="10">
+
+            <!-- Row 0 -->
+            <Button fx:id="btn00" onAction="#handleMove" prefWidth="100" prefHeight="100"/>
+            <Button fx:id="btn01" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.columnIndex="1"/>
+            <Button fx:id="btn02" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.columnIndex="2"/>
+
+            <!-- Row 1 -->
+            <Button fx:id="btn10" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.rowIndex="1"/>
+            <Button fx:id="btn11" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Button fx:id="btn12" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+
+            <!-- Row 2 -->
+            <Button fx:id="btn20" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.rowIndex="2"/>
+            <Button fx:id="btn21" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Button fx:id="btn22" onAction="#handleMove" prefWidth="100" prefHeight="100" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+
+        </GridPane>
+    </center>
+
+    <!-- ===== BOTTOM ===== -->
+    <bottom>
+        <VBox alignment="CENTER" spacing="10">
+            <Label fx:id="statusLabel"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>

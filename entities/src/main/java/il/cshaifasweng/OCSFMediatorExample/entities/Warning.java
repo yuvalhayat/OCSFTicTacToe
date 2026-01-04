@@ -10,23 +10,18 @@ public class Warning implements Serializable {
 	 */
 	private static final long serialVersionUID = -8224097662914849956L;
 	
-	private String message;
-	private LocalTime time;
+	private Response response;
+	private Object data;
 
-	public String getMessage() {
-		return message;
+	public Response getResponse() {
+		return response;
 	}
+    public Object getData() {
+        return data;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public Warning(String message) {
-		this.message = message;
-		this.time = LocalTime.now();
-	}
-
-	public LocalTime getTime() {
-		return time;
+	public Warning(Response response,Object data) {
+		this.response = response;
+		this.data = data;
 	}
 }
