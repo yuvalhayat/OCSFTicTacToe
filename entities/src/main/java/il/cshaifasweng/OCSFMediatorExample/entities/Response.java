@@ -1,15 +1,15 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 public enum Response {
-    showWinningScreen,  //ok
-    showLosingScreen,   //ok
+    showWinningScreen,
+    showLosingScreen,
     showDrawingScreen,
 
-    waitInQueue,    //ok
-    gameScreen,     //ok
+    waitInQueue,
+    gameScreen,
 
-    setSymbol,      //ok
-    updateGame,     //ok
+    setSymbol,
+    updateGame,
 
     whoseTurn,
 }
