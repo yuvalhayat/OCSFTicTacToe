@@ -28,9 +28,6 @@ public class App extends Application {
 
     private Stage stage;
     private static FXMLLoader  fxmlLoader ;
-    private static final String FXML_PATH = "il/cshaifasweng/OCSFMediatorExample/client/";
-
-    //private static Scene scene;
 
     private SimpleClient client;
 
@@ -40,17 +37,10 @@ public class App extends Application {
     	client = SimpleClient.getClient();
     	client.openConnection();
         this.stage = stage;
-        /*
-        scene = new Scene(loadFXML("queueScreen"), 640, 480);
-        stage.setScene(scene);
-        stage.show();*/
+
         client.sendToServer("add client");
     }
 
-    /*
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }*/
 
     private static Parent loadFXML(String fxml) throws IOException {
         fxmlLoader = new FXMLLoader(App.class.getResource( fxml + ".fxml"));
@@ -72,8 +62,6 @@ public class App extends Application {
     public void showScreen(String fxml) {
         try {
             URL url = getClass().getResource(fxml+".fxml");
-            //System.out.println("Loading FXML: " + fxml + " → " + url);
-           // System.out.println(url==null?"null":url.toString());
             if (url == null) {
                 throw new IllegalStateException(
                         "FXML not found on classpath at: " + fxml +
@@ -81,7 +69,6 @@ public class App extends Application {
                 );
             }
 
-            //fxmlLoader = new FXMLLoader(url);
 
             Parent root = loadFXML(fxml);
             Scene scene = new Scene(root);
@@ -92,26 +79,6 @@ public class App extends Application {
         }
     }
 
-    /*
-    * TODO:
-    *  1.add setter method in gamescreen controller for the shape of the player
-    *  2.finish the if else statements,for
-    *  3.in App.java:
-    *  change start() so it send to server that it has connected (and not load anything at the moment)
-    *  4.in handleMessageFromClient in simpleServer implement:
-    *  if it got sent: new client and the current client counter is 0
-    *  (client counter is a synchronized variable in simpleServer) ,send waitInQueue to it and increment counter
-    *  ,send waitInQueue for it,otherwise,send everyone gameScreen
-    *  when it get sent
-    *  logic that get get the indexs from user
-    *  5
-    *
-    *
-    *
-    *
-    *
-    *
-    * */
     @Subscribe
     public void onMessageEvent(MessageEvent event) throws IOException {
         Message message = event.getMessage();
@@ -175,7 +142,7 @@ public class App extends Application {
             });
         }
         else{
-            System.err.println("message in the wrong format recived");
+            System.err.println("message in the wrong format received");
         }
     	
     }

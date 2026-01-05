@@ -2,7 +2,6 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 import java.util.Random;
 
 public class ticTacToeGame {
-    //X always goes first
     private int playerXId;
     private int playerOId;
 
@@ -11,7 +10,7 @@ public class ticTacToeGame {
     private char whoseTurn;
 
     public ticTacToeGame(int player1Id,int player2Id){
-        whoseTurn = 'X';
+        whoseTurn = 'X';//X always goes first
         Random random = new Random();
         boolean randomBoolean =  random.nextBoolean();
         if(randomBoolean){
@@ -24,6 +23,11 @@ public class ticTacToeGame {
         }
     }
 
+
+    /*
+    * get a move if the move is illegal return GameStatus.invalidMove
+    * otherwise update the board, and return GameStatus to indicate the state of the game after that move
+    * */
     public GameStatus playMove(char symbol, int row, int col){
         if(!isMoveValid(symbol,row,col)){
             return GameStatus.invalidMove;
@@ -47,17 +51,24 @@ public class ticTacToeGame {
 
     public boolean isMoveValid(char symbol,int row,int col){
         if(symbol!=this.getWhoseTurn()){
+            //it's not that player turn
             return false;
         }
         if((row<0 || row>=3)||(col<0 || col>=3)){
+            //out of bound
             return false;
         }
         if(board[row][col]!=0){
+            //the square is already occupied
             return false;
         }
         return true;
     }
 
+    /*
+    * check if the player with the symbol in the argument has won
+    * return true if they won and false otherwise
+    */
     public boolean hasPlayerWon(char symbol){
         for (int i = 0; i < 3; i++) {
             if (board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) {
@@ -92,13 +103,5 @@ public class ticTacToeGame {
         return playerId == playerXId ? 'X':'O';
     }
 
-    /** next:
-     *  at the beginning:create game and check the symbol of each player and send it to them
-     *  in each iteration:
-     *  tell both whose turn is it X
-     *  when we get a move request,we check if it's valid and if it's that player turn v
-     *  (latter the last one is true we dismiss the request entirly) v
-     *  otherwise,we send both player the move x
-     *  if it was a win/loss/draw,we send the players the win/loss msg v
-     * */
+
 }

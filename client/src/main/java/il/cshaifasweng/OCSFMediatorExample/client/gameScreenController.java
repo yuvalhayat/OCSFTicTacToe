@@ -2,7 +2,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import java.io.IOException;
-import java.security.cert.PolicyNode;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MoveRequest;
 import il.cshaifasweng.OCSFMediatorExample.entities.SymbolRequest;
@@ -27,6 +26,9 @@ public class gameScreenController {
 
 
     @FXML
+    /*
+    * send a move request to the server after clicking a button
+    * */
     void handleMove(ActionEvent event) {
         Button clicked = (Button) event.getSource();
         try {
@@ -50,20 +52,30 @@ public class gameScreenController {
         }
     }
 
+    /*
+    * get a symbol that indicate whose move is it and update the text at the bottom to tell the player whose move is it
+    * */
     void handleWhoseTurn(char symbol) {
         if(mySymbol == symbol) {
-            statusLabel.setText("It's your turn!,you are "+mySymbol);
+            statusLabel.setText("It's your turn!\nRemember,you are "+mySymbol);
         }
         else {
-            statusLabel.setText("It's your opponent's turn!,you are "+mySymbol);
+            statusLabel.setText("It's your opponent's turn!\nRemember, you are "+mySymbol);
         }
     }
 
+
+    /*
+    * set the symbol of the player for the rest of the game
+    * */
     void handleSetSymbol(SymbolRequest symbolRequest) {
         this.mySymbol = symbolRequest.getMySymbol();
         this.opponentSymbol = symbolRequest.getOpponentSymbol();
     }
 
+    /*
+     * get a new move and update the board according to that move
+     * */
     void handleMoveRequest(MoveRequest moveRequest) {
         int row = moveRequest.getRow();
         int col = moveRequest.getCol();

@@ -10,17 +10,17 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
 
-import static il.cshaifasweng.OCSFMediatorExample.entities.Response.*;
 import il.cshaifasweng.OCSFMediatorExample.server.GameStatus.*;
 
 public class SimpleServer extends AbstractServer {
 	private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
+
     private ticTacToeGame game;
     private int secondsToWaitBetweenGames = 5;
-	public SimpleServer(int port) {
+
+    public SimpleServer(int port) {
 		super(port);
 		
 	}
@@ -31,18 +31,26 @@ public class SimpleServer extends AbstractServer {
         if (msg instanceof String) {
             String msgString = msg.toString();
             if(msgString.startsWith("add client")){
+
+                System.out.println("-----------------------------------------");
+                System.out.println("Adding client");
+
                 SubscribedClient connection = new SubscribedClient(client);
                 SubscribersList.add(connection);
-                System.out.println("Sub list size: "+SubscribersList.size());
+
+                System.out.println("Subscriber's list size: "+SubscribersList.size());
+
                 try {
                     if(SubscribersList.size()==1){
                         Message message = new Message(Response.waitInQueue,null);
                         client.sendToClient(message);
-                        System.out.println("Sub list size == 1 ");
+
+                        System.out.println("sending " + client.toString() + " to queue");
 
                     }
                     else{
                         this.setUpNewGame();
+                        System.out.println("New Game Started");
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -50,29 +58,38 @@ public class SimpleServer extends AbstractServer {
             }
             else if(msgString.startsWith("remove client")){
                 if(!SubscribersList.isEmpty()){
+
+                    System.out.println("-----------------------------------------");
+                    System.out.println("removing client");
+
                     for(SubscribedClient subscribedClient: SubscribersList){
                         if(subscribedClient.getClient().equals(client)){
                             SubscribersList.remove(subscribedClient);
+                            System.out.println("Subscriber's list size: "+SubscribersList.size());
+
+                            System.out.println("sending all other clients to queue");
                             Message message = new Message(Response.waitInQueue,null);
                             sendToAllClients(message);
                             break;
                         }
                     }
                 }
-                System.out.println("Sub list size: "+SubscribersList.size());
             }
         }
         else if(msg instanceof MoveRequest){
-            System.out.println("got move request");
 
             MoveRequest move = (MoveRequest)msg;
             int row = move.getRow();
             int col = move.getCol();
             char symbol = move.getSymbol();
-            if(!game.isMoveValid(symbol,row,col)){
-                System.out.println("invalid move by " + symbol + " " + row + " " + col);
-                return;
-            }
+
+            //we dismiss the request if it was sent by a player not on his turn
+            if(game.getWhoseTurn()!=symbol){return;}
+
+
+            System.out.println("-----------------------------------------");
+            System.out.println("Got move request by "+ symbol + " at (" + row + "," + col+")");
+
             GameStatus status = game.playMove(symbol,row,col);
             Message message = new Message(Response.updateGame,move);
             sendToAllClients(message);
@@ -82,13 +99,17 @@ public class SimpleServer extends AbstractServer {
                     int winningPlayerIndex;
                     int losingPlayerIndex;
                     if( status==GameStatus.playerXWon){
+                        System.out.println("Player X won");
+
                         winningPlayerIndex = getPlayerIndex('X');
                         losingPlayerIndex = getPlayerIndex('O');
                     }
                     else{
+                        System.out.println("Player O won");
                         winningPlayerIndex = getPlayerIndex('O');
                         losingPlayerIndex = getPlayerIndex('X');
                     }
+
                     ConnectionToClient winningPlayer = SubscribersList.get(winningPlayerIndex).getClient();
                     ConnectionToClient losingPlayer = SubscribersList.get(losingPlayerIndex).getClient();
 
@@ -99,24 +120,27 @@ public class SimpleServer extends AbstractServer {
                     losingPlayer.sendToClient(losingMessage);
 
                     Thread.sleep(secondsToWaitBetweenGames * 1000);
+                    System.out.println("Restarting the game");
                     setUpNewGame();
                 }
                 else if(status==GameStatus.draw){
-                    System.out.println("draw");
+                    System.out.println("Game ended in a draw");
 
                     message = new Message(Response.showDrawingScreen,null);
                     sendToAllClients(message);
+
                     Thread.sleep(secondsToWaitBetweenGames * 1000);
+                    System.out.println("Restarting the game");
                     setUpNewGame();
                 }
                 else if (status==GameStatus.gameContinue){
-                    System.out.println("game continue");
+                    System.out.println("The game continues");
 
                     message =  new Message(Response.whoseTurn,game.getWhoseTurn());
                     sendToAllClients(message);
                 }
                 else{
-                    System.err.println("invalid move by " + symbol + " " + row + " " + col);
+                    System.err.println("Invalid move");
                 }
 
             }
@@ -124,10 +148,9 @@ public class SimpleServer extends AbstractServer {
                 e.printStackTrace();
             }
 
-
         }
         else{
-            System.err.println("wrong message format");
+            System.err.println("Wrong message format");
 
         }
 	}
@@ -142,13 +165,17 @@ public class SimpleServer extends AbstractServer {
 		}
 	}
 
+    /*
+    * get the symbol of the client in a certain index in the list
+    * */
     private char getClientSymbol(int index ){
         return game.getSymbolOfPlayer(index);
     }
 
+    /*
+     * set up a new game and send the players massages for the set up of the game
+     * */
     private void setUpNewGame() throws IOException{
-        System.out.println("Starting game ");
-
         Message message = new Message(Response.gameScreen,null);
         this.sendToAllClients(message);
         ConnectionToClient client1 = SubscribersList.get(0).getClient();
@@ -172,6 +199,10 @@ public class SimpleServer extends AbstractServer {
         sendToAllClients(message);
     }
 
+    /*
+    * get a symbol of one of the player and return the index of the player in the list
+    * whose symbol equal to the argument
+    * */
     private int getPlayerIndex(char Symbol){
         if(Symbol==getClientSymbol(0)){
             return 0;
