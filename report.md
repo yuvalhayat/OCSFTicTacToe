@@ -2,17 +2,12 @@ Yuval Hayat
 Rani Hasan
 
 
-![proof](path/to/image.jpg)
-dont forget to commit and push the changes at the end
-
-    /** next:
-     *  at the beginning:create game and check the symbol of each player and send it to them
-     *  in each iteration:
-     *  tell both whose turn is it X
-     *  when we get a move request,we check if it's valid and if it's that player turn v
-     *  (latter the last one is true we dismiss the request entirly) v
-     *  otherwise,we send both player the move x
-     *  if it was a win/loss/draw,we send the players the win/loss msg v
-     * */
-    change localhostIn abstractClient
-    remember to disable firewall
+![server initialized on pc1](images/image1.jpg)
+![client 2 joined from pc 2 and entered the waiting queue](images/image2.jpg)
+![client 1 joined from pc 1 and started the game with client 2](images/image3.jpg)
+![client 2 started the game with client 1](images/image4.jpg)
+![client 1 made a move](images/image5.jpg)
+![client 2 received client 1 move's and he played his move](images/image6.jpg)
+![client 1 received client 2 move's](images/image7.jpg)
+![client 1 left the game](images/image8.jpg)
+![client 2 got sent to the waiting queue](images/image9.jpg)
