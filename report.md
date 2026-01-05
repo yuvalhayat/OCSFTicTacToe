@@ -2,6 +2,9 @@
 Yuval Hayat
 Rani Hasan
 
+## jars
+the jars file exist under the folder /jars
+
 ## images
 1. server initialized on pc 1.<br>  
 ![server initialized on pc 1](images/image1.jpg)
